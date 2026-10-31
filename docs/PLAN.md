@@ -50,17 +50,18 @@ stack. Reasoning discussed:
   repo's `docs/CICD_PLAN.md`). Nothing new to invent there, just reapply it
   with Jenkins as the caller instead of a GitHub Actions runner.
 
-**Open / blocking, confirm when back in SD:**
-- [ ] **Is the Pi 500 actually on the same Tailscale network as the Pi 400?**
-      Checked `tailscale status` from the Mac on 2026-11-02 — only `homelab`
-      (Pi 400) and an offline `desktop-8hcgd6u` showed up. No Pi 500 visible.
-      Ethan believes it should be joined already, but this wasn't confirmed
-      directly against the Pi 500 (no physical/network access while OOT).
-      **First thing to check on return:** SSH into the Pi 500 directly and
-      run `tailscale status` / `tailscale ip` there.
-- [ ] If the Pi 500 isn't joined yet, join it (`tailscale up`) before
-      anything else — everything downstream depends on Jenkins (Pi 500)
-      being able to reach the Pi 400 over the tailnet.
+**Resolved, not actually open:** the Pi 500 is **not** on Tailscale today —
+confirmed two ways: `tailscale status` from the Mac on 2026-11-02 showed only
+`homelab` (Pi 400) and an offline unrelated device, and the `pi-ansible`
+project's own notes (written 2026-10-31) independently say the same thing:
+"the Pi 500 is only reachable on the home LAN (it isn't on Tailscale)." So
+this isn't a question to check on return — it's a known first step:
+
+- [ ] `tailscale up` on the Pi 500 (needs to be on the home LAN or physically
+      present to do this, hence waiting for Ethan to be back in SD).
+- [ ] Confirm it shows up in `tailscale status` from the Mac afterward, and
+      that it can reach the Pi 400 (`tailscale ping homelab` or similar)
+      before building anything that depends on that path.
 - [ ] Where does the small demo app itself actually *run*? Two options,
       not yet decided:
       - **(a)** Jenkins (Pi 500) deploys the container to the Pi 400,
